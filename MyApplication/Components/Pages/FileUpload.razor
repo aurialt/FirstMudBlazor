@@ -36,35 +36,35 @@
     <div>Error: @ErrorMessage</div>
 }
 
-@* <MudSimpleTable class="table table-bordered"> *@
-@*     <thead> *@
-@*     <tr> *@
-@*         <th>Reader ID</th> *@
-@*         <th>Device ID</th> *@
-@*         <th>Machine</th> *@
-@*         <th>Event Time</th> *@
-@*     </tr> *@
-@*     </thead> *@
-@*     <tbody> *@
-@*     @foreach (var readerEntry in readerEventsDict) *@
-@*     { *@
-@*         var firstEvent = true;  *@
-@*         foreach (var eventItem in readerEntry.Value) *@
-@*         { *@
-@*             <tr> *@
-@*                 @if (firstEvent) *@
-@*                 { *@
-@*                     <td rowspan="@readerEntry.Value.Count">@readerEntry.Key</td> *@
-@*                     firstEvent = false; *@
-@*                 } *@
-@*                 <td>@eventItem.DEVID</td> *@
-@*                 <td>@eventItem.MACHINE</td> *@
-@*                 <td>@eventItem.EventTime</td> *@
-@*             </tr> *@
-@*         } *@
-@*     } *@
-@*     </tbody> *@
-@* </MudSimpleTable> *@
+<MudSimpleTable class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Reader ID</th>
+        <th>Device ID</th>
+        <th>Machine</th>
+        <th>Event Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var readerEntry in readerEventsDict)
+    {
+        var firstEvent = true;
+        foreach (var eventItem in readerEntry.Value)
+        {
+            <tr>
+                @if (firstEvent)
+                {
+                    <td rowspan="@readerEntry.Value.Count">@readerEntry.Key</td>
+                    firstEvent = false;
+                }
+                <td>@eventItem.DEVID</td>
+                <td>@eventItem.MACHINE</td>
+                <td>@eventItem.EventTime</td>
+            </tr>
+        }
+    }
+    </tbody>
+</MudSimpleTable>
 
 @* Testing Large tables w/ pages *@
 @* <MudTable @ref="@_table" Items="@_elements" RowsPerPage="4" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info"> *@

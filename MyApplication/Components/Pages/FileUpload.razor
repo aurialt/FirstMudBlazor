@@ -1,0 +1,158 @@
+@page "/FileUpload"
+@rendermode InteractiveServer
+
+<PageTitle>Blazor Server File Upload</PageTitle>
+
+<MudText>File Upload - MudText</MudText>
+
+<div style="margin-bottom: 20px; display: flex;">
+    <div>Select your file:</div>
+    <InputFile OnChange="FileUploaded" />
+</div>
+
+<MudFileUpload T="IBrowserFile" OnFilesChanged="FileUploaded">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Upload Files
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+<label>Reader Events Count: @readerEvents.Count</label>
+
+<h2>Selected file</h2>
+<div>
+    <div>File name: @FileName</div>
+    <div>File size: @FileSize.ToString("n0") bytes</div>
+    <div>File type: @FileType</div>
+    <div>Last modified: @LastModified</div>
+</div>
+
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div>Error: @ErrorMessage</div>
+}
+
+@* <MudSimpleTable class="table table-bordered"> *@
+@*     <thead> *@
+@*     <tr> *@
+@*         <th>Reader ID</th> *@
+@*         <th>Device ID</th> *@
+@*         <th>Machine</th> *@
+@*         <th>Event Time</th> *@
+@*     </tr> *@
+@*     </thead> *@
+@*     <tbody> *@
+@*     @foreach (var readerEntry in readerEventsDict) *@
+@*     { *@
+@*         var firstEvent = true;  *@
+@*         foreach (var eventItem in readerEntry.Value) *@
+@*         { *@
+@*             <tr> *@
+@*                 @if (firstEvent) *@
+@*                 { *@
+@*                     <td rowspan="@readerEntry.Value.Count">@readerEntry.Key</td> *@
+@*                     firstEvent = false; *@
+@*                 } *@
+@*                 <td>@eventItem.DEVID</td> *@
+@*                 <td>@eventItem.MACHINE</td> *@
+@*                 <td>@eventItem.EventTime</td> *@
+@*             </tr> *@
+@*         } *@
+@*     } *@
+@*     </tbody> *@
+@* </MudSimpleTable> *@
+
+@* Testing Large tables w/ pages *@
+@* <MudTable @ref="@_table" Items="@_elements" RowsPerPage="4" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info"> *@
+@*     <HeaderContent> *@
+@*         <MudTh>Reader ID</MudTh> *@
+@*         <MudTh>Device ID</MudTh> *@
+@*         <MudTh>Machine</MudTh> *@
+@*         <MudTh>Event Time</MudTh> *@
+@*     </HeaderContent> *@
+@*     <RowTemplate> *@
+@*         @if (@context.IsFirstEvent) *@
+@*         { *@
+@*             <MudTd DataLabel="Reader ID" RowSpan="@context.RowSpan">@context.ReaderId</MudTd> *@
+@*         } *@
+@*         <MudTd DataLabel="Device ID">@context.DEVID</MudTd> *@
+@*         <MudTd DataLabel="Machine">@context.MACHINE</MudTd> *@
+@*         <MudTd DataLabel="Event Time">@context.EventTime</MudTd> *@
+@*     </RowTemplate> *@
+@*     <PagerContent> *@
+@*         <MudPagination SelectedChanged="PageChanged" Count="@((_table.GetFilteredItemsCount() + _table.RowsPerPage - 1) / _table.RowsPerPage)" Class="pa-4"/> *@
+@*     </PagerContent> *@
+@* </MudTable> *@
+@* *@
+@* @code { *@
+@*     private MudTable<EventItem> _table; *@
+@*     private IEnumerable<EventItem> _elements = new List<EventItem>(); *@
+@* *@
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         _elements = readerEventsDict.SelectMany(entry => entry.Value.Select((eventItem, index) => new EventItem *@
+@*         { *@
+@*             ReaderId = entry.Key, *@
+@*             DEVID = eventItem.DEVID, *@
+@*             MACHINE = eventItem.MACHINE, *@
+@*             EventTime = DateTime.Parse(eventItem.EventTime), *@
+@*             IsFirstEvent = index == 0, *@
+@*             RowSpan = entry.Value.Count *@
+@*         })).ToList(); *@
+@*     } *@
+@* *@
+@*     private void PageChanged(int i) *@
+@*     { *@
+@*         _table.NavigateTo(i - 1); *@
+@*     } *@
+@* *@
+@*     public class EventItem *@
+@*     { *@
+@*         public string ReaderId { get; set; } *@
+@*         public string DEVID { get; set; } *@
+@*         public string MACHINE { get; set; } *@
+@*         public DateTime EventTime { get; set; } *@
+@*         public bool IsFirstEvent { get; set; } *@
+@*         public int RowSpan { get; set; } *@
+@*     } *@
+@* } *@
+
+<MudSimpleTable class="table table-bordered">
+    <thead>
+    <tr>
+        <th>DayOfWeek</th>
+        <th>Device ID</th>
+        <th>Machine</th>
+        <th>Event Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var readerEntry in ListDayOfWeekReaderEvents)
+    {
+        var firstEvent = true;
+        foreach (var eventItem in readerEntry.Value)
+        {
+            <tr>
+                @if (firstEvent)
+                {
+                    <td rowspan="@readerEntry.Value.Count">@readerEntry.Key</td>
+                    firstEvent = false;
+                }
+                <td>@eventItem.DEVID</td>
+                <td>@eventItem.MACHINE</td>
+                <td>@eventItem.EventTime</td>
+            </tr>
+        }
+    }
+    </tbody>
+</MudSimpleTable>
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options" ></MudChart>
+</div>
+
+}
